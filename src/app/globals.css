@@ -1,26 +1,28 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-exam: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-passage: "Merriweather", Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-exam);
+  -webkit-font-smoothing: antialiased;
 }
+
+.passage-text {
+  font-family: var(--font-passage);
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: #1a1a1a;
+}
+
+.exam-scroll::-webkit-scrollbar { width: 8px; }
+.exam-scroll::-webkit-scrollbar-track { background: #e5e7eb; border-radius: 4px; }
+.exam-scroll::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 4px; }
+.exam-scroll::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+.passage-text ::selection { background: #fef08a; }
+.answer-choice { transition: background-color 0.1s ease, border-color 0.1s ease; }
