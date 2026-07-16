@@ -59,5 +59,15 @@ if (qErr) ok(`anon select on questions rejected: ${qErr.message}`);
 else if ((qRows ?? []).length === 0) ok('anon select on questions returned 0 rows (RLS moat holding)');
 else bad(`MOAT BREACH: anon key read ${qRows.length} rows from questions!`);
 
+// The check above is only meaningful if there is something to hide: an empty
+// table returns 0 rows to anon whether or not RLS works. Say so plainly rather
+// than reporting a green that proves nothing.
+const { count: qCount } = await admin.from('questions').select('*', { head: true, count: 'exact' });
+if (!qCount) {
+  console.log('  NOTE  `questions` is empty, so the check above is VACUOUS — it would');
+  console.log('        pass even with RLS off. Run `node scripts/verify-moat-canary.mjs`');
+  console.log('        for a real proof (it plants a row, re-tests, then removes it).');
+}
+
 console.log(failed ? '\nRESULT: FAILURES — see above.' : '\nRESULT: all checks passed.');
 process.exit(failed ? 1 : 0);
