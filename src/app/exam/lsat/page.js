@@ -1,7 +1,10 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useExam } from "@/context/ExamContext";
 import ExamInterface from "@/components/ExamInterface";
+
+const HEADER_BG = "#1a2332";
+const ACCENT = "#2563eb";
 
 export default function LSATPage() {
   const {
@@ -17,7 +20,6 @@ export default function LSATPage() {
   const [error, setError] = useState(null);
   const [loadingSections, setLoadingSections] = useState(true);
 
-  // Fetch sections from the DB (authenticated user can read via RLS)
   useEffect(() => {
     if (!user) return;
     supabase
@@ -46,21 +48,22 @@ export default function LSATPage() {
     }
   };
 
+  const selectedSectionData = sections.find(s => s.code === selectedSection);
+
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-gray-500">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#f1f5f9" }}>
+        <div className="text-gray-400 text-lg">Loading...</div>
       </div>
     );
   }
 
-  // When an exam is active, render ExamInterface full-screen
   if (activeExam) {
     return (
       <ExamInterface
         questions={activeExam.questions}
         examTitle={activeExam.examTitle}
-        sectionName={activeExam.sectionCode || "LSAT"}
+        sectionName={selectedSectionData?.name || activeExam.sectionCode || "LSAT"}
         sectionAbbr={activeExam.sectionAbbr}
         sectionColor={activeExam.sectionColor}
         timeLimit={activeExam.timeLimit}
@@ -82,81 +85,92 @@ export default function LSATPage() {
     );
   }
 
-  // Launch page
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: "#f1f5f9", fontFamily: "var(--font-exam)" }}>
       {/* Header */}
-      <div className="bg-[#2b579a] text-white px-6 py-4">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold">Law School Admission Test</h1>
-            <p className="text-sm opacity-80">LSAT Practice</p>
+      <header className="h-14 flex items-center px-6" style={{ background: HEADER_BG }}>
+        <div className="max-w-3xl mx-auto w-full flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: ACCENT }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="white"><rect x="2" y="3" width="12" height="1.8" rx=".9"/><rect x="2" y="7.1" width="12" height="1.8" rx=".9"/><rect x="2" y="11.2" width="8" height="1.8" rx=".9"/></svg>
+            </div>
+            <div>
+              <div className="text-white font-bold text-[11px] tracking-[0.1em] uppercase leading-tight">THE ACADEMY</div>
+              <div className="text-gray-400 text-[11px] leading-tight">LSAT Practice</div>
+            </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm opacity-80">{displayName}</span>
+            <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-xs font-semibold">
+              {displayName?.[0]?.toUpperCase() || "S"}
+            </div>
+            <span className="text-sm text-gray-300">{displayName}</span>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="max-w-3xl mx-auto py-10 px-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Start a Session</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">Start a Session</h2>
+          <p className="text-sm text-gray-500 mb-8">Choose a section and mode to begin practicing.</p>
 
-        {/* Section picker */}
-        <div className="mb-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-3">Section</label>
-          <div className="grid grid-cols-2 gap-3">
-            {loadingSections ? (
-              <div className="col-span-2 text-sm text-gray-500">Loading sections...</div>
-            ) : sections.map(section => (
-              <button key={section.id} onClick={() => setSelectedSection(section.code)}
-                className={`p-4 rounded-lg border-2 text-left transition-colors ${selectedSection === section.code
-                  ? "border-[#2b579a] bg-blue-50"
-                  : "border-gray-200 bg-white hover:border-gray-300"
+          {/* Section picker */}
+          <div className="mb-8">
+            <label className="block text-[11px] font-semibold text-gray-400 uppercase tracking-[0.08em] mb-3">Section</label>
+            <div className="grid grid-cols-2 gap-3">
+              {loadingSections ? (
+                <div className="col-span-2 text-sm text-gray-400">Loading sections...</div>
+              ) : sections.map(section => (
+                <button key={section.id} onClick={() => setSelectedSection(section.code)}
+                  className={`p-4 rounded-xl border-2 text-left transition-all ${selectedSection === section.code
+                    ? "border-blue-500 bg-blue-50/50 shadow-sm"
+                    : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
                   }`}>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ background: section.color }} />
-                  <span className="font-semibold text-gray-900">{section.name}</span>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">{section.abbr}</div>
-              </button>
-            ))}
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: section.color }} />
+                    <span className="font-semibold text-gray-900">{section.name}</span>
+                  </div>
+                  <div className="text-xs text-gray-400 mt-1 ml-[22px]">{section.abbr}</div>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Mode picker */}
-        <div className="mb-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-3">Mode</label>
-          <div className="flex gap-3">
-            {[
-              { id: "practice", label: "Practice", desc: "Untimed, review as you go" },
-              { id: "timed", label: "Timed", desc: "35-minute section timer" },
-            ].map(m => (
-              <button key={m.id} onClick={() => setSelectedMode(m.id)}
-                className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${selectedMode === m.id
-                  ? "border-[#2b579a] bg-blue-50"
-                  : "border-gray-200 bg-white hover:border-gray-300"
+          {/* Mode picker */}
+          <div className="mb-8">
+            <label className="block text-[11px] font-semibold text-gray-400 uppercase tracking-[0.08em] mb-3">Mode</label>
+            <div className="flex gap-3">
+              {[
+                { id: "practice", label: "Practice", desc: "Untimed, review as you go" },
+                { id: "timed", label: "Timed", desc: "35-minute section timer" },
+              ].map(m => (
+                <button key={m.id} onClick={() => setSelectedMode(m.id)}
+                  className={`flex-1 p-4 rounded-xl border-2 text-left transition-all ${selectedMode === m.id
+                    ? "border-blue-500 bg-blue-50/50 shadow-sm"
+                    : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
                   }`}>
-                <div className="font-semibold text-sm text-gray-900">{m.label}</div>
-                <div className="text-xs text-gray-500">{m.desc}</div>
-              </button>
-            ))}
+                  <div className="font-semibold text-sm text-gray-900">{m.label}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{m.desc}</div>
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Question count */}
+          <div className="mb-8">
+            <label className="block text-[11px] font-semibold text-gray-400 uppercase tracking-[0.08em] mb-2">Questions</label>
+            <input type="number" min={1} max={100} value={questionCount}
+              onChange={e => setQuestionCount(Math.max(1, parseInt(e.target.value) || 1))}
+              className="w-24 px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
+          </div>
+
+          {error && <p className="text-sm text-red-500 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">{error}</p>}
+
+          <button onClick={handleStart} disabled={!selectedSection || starting}
+            className="px-8 py-3 text-white rounded-lg font-semibold disabled:opacity-40 transition-all hover:opacity-90"
+            style={{ background: ACCENT }}>
+            {starting ? "Starting..." : "Start Session"}
+          </button>
         </div>
-
-        {/* Question count */}
-        <div className="mb-8">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Questions</label>
-          <input type="number" min={1} max={100} value={questionCount}
-            onChange={e => setQuestionCount(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-24 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-        </div>
-
-        {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-
-        <button onClick={handleStart} disabled={!selectedSection || starting}
-          className="px-8 py-3 bg-[#2b579a] text-white rounded-lg font-semibold hover:bg-[#1e3a5f] disabled:opacity-50 transition-colors">
-          {starting ? "Starting..." : "Start Session"}
-        </button>
       </div>
     </div>
   );
