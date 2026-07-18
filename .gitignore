@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# content batches (contain answer keys)
+/batches/
+
 # vercel
 .vercel
 

@@ -22,6 +22,7 @@ export async function POST(req) {
   if (filters.difficulty) query = query.eq('difficulty', filters.difficulty);
   // (status filters — unseen/incorrect/flagged — join question_attempts here)
 
+  query = query.order('batch').order('sort_order');
   const { data: pool, error } = await query;
   if (error)  return Response.json({ error: error.message }, { status: 500 });
   if (!pool?.length) return Response.json({ error: 'no questions' }, { status: 404 });
