@@ -701,7 +701,7 @@ export default function ExamInterface({
             {/* ── QuestionPanel (right, always 48%) ── */}
             {!passageFullView && (
               <div className="flex-none" style={{ width: "48%" }}>
-                <div ref={questionRef} className="h-full overflow-y-auto exam-scroll" style={{ padding: "32px 36px" }}>
+                <div ref={questionRef} className="h-full overflow-y-auto exam-scroll" style={{ padding: "24px 28px" }}>
                   {/* QuestionHeader */}
                   <div className="flex items-center justify-between mb-5">
                     <div className="text-[11px] uppercase tracking-[0.1em] font-semibold" style={{ color: MUTED_TEXT }}>
@@ -727,10 +727,10 @@ export default function ExamInterface({
                   </div>
 
                   {/* QuestionStem */}
-                  <h2 className="font-bold text-[20px] leading-[1.4] mb-5" style={{ color: DARK_TEXT }}>{q.stem}</h2>
+                  <h2 className="font-bold text-[18px] leading-[1.4] mb-4" style={{ color: DARK_TEXT }}>{q.stem}</h2>
 
                   {/* AnswerChoiceList */}
-                  <div className="flex flex-col" style={{ gap: "10px" }}>
+                  <div className="flex flex-col" style={{ gap: "8px" }}>
                     {q.choices.map(choice => {
                       const isSel = answers[q.id] === choice.label;
                       const isStr = struck[q.id]?.[choice.label];
@@ -758,28 +758,28 @@ export default function ExamInterface({
                       return (
                         <div key={choice.label}
                           className={`flex items-center transition-all ${isStr && !isReview ? "opacity-45" : ""} ${!isReview ? "cursor-pointer" : ""}`}
-                          style={{ borderRadius: "13px", border: `${isSel && !isReview ? "2px" : "1.5px"} solid ${borderCol}`, background: bgCol }}>
+                          style={{ borderRadius: "10px", border: `${isSel && !isReview ? "2px" : "1.5px"} solid ${borderCol}`, background: bgCol }}>
                           <button onClick={() => { if (!isReview) selectAnswer(choice.label); }} disabled={isReview}
-                            className="flex items-center gap-3 flex-1 text-left min-w-0"
-                            style={{ padding: "12px 14px", minHeight: "44px" }}>
-                            <div className="rounded-full flex-shrink-0 flex items-center justify-center text-[13px] font-bold"
-                              style={{ width: "32px", height: "32px", border: `1.5px solid ${badgeBorder}`, background: badgeBg, color: badgeText }}>
+                            className="flex items-center gap-2.5 flex-1 text-left min-w-0"
+                            style={{ padding: "10px 12px" }}>
+                            <div className="rounded-full flex-shrink-0 flex items-center justify-center text-[12px] font-bold"
+                              style={{ width: "26px", height: "26px", border: `1.5px solid ${badgeBorder}`, background: badgeBg, color: badgeText }}>
                               {(isSel && !isReview) || isCor ? <CheckIcon /> : isIncSel ? <XMarkIcon /> : choice.label}
                             </div>
                             <span className={`leading-snug ${isStr && !isReview ? "line-through" : ""}`}
-                              style={{ fontSize: "15px", color: isStr && !isReview ? MUTED_TEXT : isSel && !isReview ? DARK_TEXT : DARK_TEXT, fontWeight: isSel && !isReview ? 600 : 400 }}>
+                              style={{ fontSize: "14px", color: isStr && !isReview ? MUTED_TEXT : DARK_TEXT, fontWeight: isSel && !isReview ? 600 : 400 }}>
                               {choice.text}
                             </span>
                           </button>
-                          <div className="flex items-center gap-2 flex-shrink-0" style={{ paddingRight: "14px" }}>
+                          <div className="flex items-center gap-1.5 flex-shrink-0" style={{ paddingRight: "10px" }}>
                             {isSel && !isReview && (
-                              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#D6E4FF", color: PRIMARY }}>Selected</span>
+                              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "#D6E4FF", color: PRIMARY }}>Selected</span>
                             )}
                             {!isSel && !isReview && (
                               <button onClick={(e) => { e.stopPropagation(); toggleStrike(choice.label); }}
                                 className="rounded-full flex items-center justify-center transition-colors"
                                 style={{
-                                  width: "30px", height: "30px",
+                                  width: "26px", height: "26px",
                                   color: isStr ? "#E45E3B" : "#8B97A9",
                                   background: isStr ? "#FEF0EC" : "#F7F9FC",
                                   border: `1.5px solid ${isStr ? "#E45E3B" : "#C7D1DF"}`,
