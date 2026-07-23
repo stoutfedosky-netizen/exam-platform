@@ -142,9 +142,39 @@ export const EXAMS = {
     theme: { accent: '#be123c' },
   },
 
+  sat: {
+    id: 'sat',
+    title: 'SAT',
+    shortName: 'SAT',
+
+    // Real Digital SAT has a built-in Desmos calculator on all of Math;
+    // 'calculator' stands in until a desmos tool exists.
+    tools: ['calculator'],
+
+    // Digital SAT pacing: RW 64 min / 54 q (~71 s), Math 70 min / 44 q (~95 s);
+    // 80 s/question approximates the overall 98 q / 134 min.
+    timing: { mode: 'perQuestion', seconds: 80 },
+
+    // Two adaptive modules per section on the real test; modeled here as two
+    // passes over each pool. questionsPerSection approximates 27 RW / 22 Math.
+    simulation: {
+      sections: [
+        { code: 'rw',   scored: true },
+        { code: 'rw',   scored: true },
+        { code: 'math', scored: true },
+        { code: 'math', scored: true },
+      ],
+      questionsPerSection: 25,
+    },
+
+    // 200-800 per section, 400-1600 total; raw % until a conversion table
+    // is dropped in.
+    scale: null,
+
+    theme: { accent: '#0369a1' },
+  },
+
   // ---- add later, same shape ----
-  // sat: { id:'sat', title:'SAT', shortName:'SAT', tools:['desmos'],
-  //        timing:{ mode:'perModule', seconds:... }, scale:{...}, ... },
   // nclex: { ..., tools:['calculator'], ... },
 };
 

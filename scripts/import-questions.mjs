@@ -27,6 +27,7 @@ const EXAM_RULES = {
   pmp:  { sections: new Set(["pmp_people", "pmp_process", "pmp_business"]), labels: ["A", "B", "C", "D"] },
   gmat: { sections: new Set(["gmat_quant", "gmat_verbal", "gmat_di"]), labels: ["A", "B", "C", "D", "E"] },
   act:  { sections: new Set(["act_english", "act_math", "act_reading", "act_science"]), labels: ["A", "B", "C", "D"] },
+  sat:  { sections: new Set(["sat_rw", "sat_math"]), labels: ["A", "B", "C", "D"] },
 };
 
 function validate(q, exam, sectionId) {
