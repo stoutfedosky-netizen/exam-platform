@@ -292,6 +292,33 @@ export const EXAMS = {
     theme: { accent: '#2563eb' },
   },
 
+  cmt: {
+    id: 'cmt',
+    title: 'Chartered Market Technician',
+    shortName: 'CMT',
+
+    tools: ['calculator'],   // an approved calculator is permitted
+
+    // Levels I and II differ in pacing on the real exam (Level II allows more
+    // time per item); 75 s is a middle ground for mixed practice batches.
+    timing: { mode: 'perQuestion', seconds: 75 },
+
+    // Levels I and II only — Level III is constructed-response and is not
+    // gradable by this engine. Counts approximate the real 132 / 170 loads.
+    simulation: {
+      sections: [
+        { code: 'level1', scored: true },
+        { code: 'level2', scored: true },
+      ],
+      questionsPerSection: 132,
+    },
+
+    // CMT reports pass/fail with domain feedback; raw % stands in.
+    scale: null,
+
+    theme: { accent: '#1e3a8a' },
+  },
+
   // ---- add later, same shape ----
 };
 

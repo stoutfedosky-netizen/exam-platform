@@ -164,7 +164,8 @@ insert into exams (id, name, short_name, sort_order) values
   ('nclex', 'NCLEX-RN', 'NCLEX', 6),
   ('bar', 'Multistate Bar Examination', 'MBE', 7),
   ('cpa', 'Uniform CPA Examination', 'CPA', 8),
-  ('mcat', 'Medical College Admission Test', 'MCAT', 9);
+  ('mcat', 'Medical College Admission Test', 'MCAT', 9),
+  ('cmt', 'Chartered Market Technician', 'CMT', 10);
 
 insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('lsat_lr', 'lsat', 'lr', 'Logical Reasoning',     'LR', '#2b579a', 1),
@@ -198,4 +199,6 @@ insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('mcat_chemphys', 'mcat', 'chemphys', 'Chemical & Physical Foundations',   'C/P',  '#2563eb', 1),
   ('mcat_cars',     'mcat', 'cars',     'Critical Analysis & Reasoning',     'CARS', '#c2410c', 2),
   ('mcat_biochem',  'mcat', 'biochem',  'Biological & Biochemical Foundations','B/B', '#047857', 3),
-  ('mcat_psychsoc', 'mcat', 'psychsoc', 'Psychological & Social Foundations', 'P/S',  '#9333ea', 4);
+  ('mcat_psychsoc', 'mcat', 'psychsoc', 'Psychological & Social Foundations', 'P/S',  '#9333ea', 4),
+  ('cmt_level1', 'cmt', 'level1', 'CMT Level I',  'CMT I',  '#1e3a8a', 1),
+  ('cmt_level2', 'cmt', 'level2', 'CMT Level II', 'CMT II', '#b45309', 2);

@@ -32,6 +32,7 @@ const EXAM_RULES = {
   bar:  { sections: new Set(["bar_civpro", "bar_conlaw", "bar_contracts", "bar_crim", "bar_evidence", "bar_property", "bar_torts"]), labels: ["A", "B", "C", "D"] },
   cpa:  { sections: new Set(["cpa_aud", "cpa_far", "cpa_reg"]), labels: ["A", "B", "C", "D"] },
   mcat: { sections: new Set(["mcat_chemphys", "mcat_cars", "mcat_biochem", "mcat_psychsoc"]), labels: ["A", "B", "C", "D"] },
+  cmt:  { sections: new Set(["cmt_level1", "cmt_level2"]), labels: ["A", "B", "C", "D"] },
 };
 
 function validate(q, exam, sectionId) {
