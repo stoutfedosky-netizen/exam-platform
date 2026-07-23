@@ -263,6 +263,35 @@ export const EXAMS = {
     theme: { accent: '#155e75' },
   },
 
+  mcat: {
+    id: 'mcat',
+    title: 'Medical College Admission Test',
+    shortName: 'MCAT',
+
+    tools: ['periodic-table'],   // the science sections provide a periodic table
+
+    // MCAT is section-timed (~95 min per section; CARS is 90). perSection
+    // returns the fixed limit regardless of question count.
+    timing: { mode: 'perSection', seconds: 95 * 60 },
+
+    // Four sections, 230 questions on the real exam (59/53/59/59).
+    simulation: {
+      sections: [
+        { code: 'chemphys', scored: true },
+        { code: 'cars',     scored: true },
+        { code: 'biochem',  scored: true },
+        { code: 'psychsoc', scored: true },
+      ],
+      questionsPerSection: 59,
+    },
+
+    // Each section scaled 118-132 (total 472-528); raw % until a conversion
+    // table is dropped in.
+    scale: null,
+
+    theme: { accent: '#2563eb' },
+  },
+
   // ---- add later, same shape ----
 };
 

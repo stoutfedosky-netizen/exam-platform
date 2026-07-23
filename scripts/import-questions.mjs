@@ -31,6 +31,7 @@ const EXAM_RULES = {
   nclex: { sections: new Set(["nclex_safe", "nclex_health", "nclex_psych", "nclex_physio"]), labels: ["A", "B", "C", "D"] },
   bar:  { sections: new Set(["bar_civpro", "bar_conlaw", "bar_contracts", "bar_crim", "bar_evidence", "bar_property", "bar_torts"]), labels: ["A", "B", "C", "D"] },
   cpa:  { sections: new Set(["cpa_aud", "cpa_far", "cpa_reg"]), labels: ["A", "B", "C", "D"] },
+  mcat: { sections: new Set(["mcat_chemphys", "mcat_cars", "mcat_biochem", "mcat_psychsoc"]), labels: ["A", "B", "C", "D"] },
 };
 
 function validate(q, exam, sectionId) {
@@ -105,6 +106,14 @@ async function importFile(filePath) {
     const contentCategory = passage_category ?? passage_format;
     if (contentCategory && q.sortOrder === 0) {
       row.content_category = contentCategory;
+    }
+    // MCAT (and any future figure-bearing exam): author figures as inline SVG in
+    // q.figure; encode to a data URI for the passage_image column. Applies to
+    // whichever question carries the figure (passage head or a discrete item).
+    if (q.figure && q.figure.svg) {
+      const svg = q.figure.svg.trim();
+      row.passage_image = `data:image/svg+xml;base64,${Buffer.from(svg, "utf8").toString("base64")}`;
+      if (q.figure.caption) row.passage_image_caption = q.figure.caption;
     }
     rows.push(row);
   }

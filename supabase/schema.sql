@@ -163,7 +163,8 @@ insert into exams (id, name, short_name, sort_order) values
   ('sat',  'SAT', 'SAT', 5),
   ('nclex', 'NCLEX-RN', 'NCLEX', 6),
   ('bar', 'Multistate Bar Examination', 'MBE', 7),
-  ('cpa', 'Uniform CPA Examination', 'CPA', 8);
+  ('cpa', 'Uniform CPA Examination', 'CPA', 8),
+  ('mcat', 'Medical College Admission Test', 'MCAT', 9);
 
 insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('lsat_lr', 'lsat', 'lr', 'Logical Reasoning',     'LR', '#2b579a', 1),
@@ -193,4 +194,8 @@ insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('bar_torts',     'bar', 'torts',     'Torts',                     'TO', '#be185d', 7),
   ('cpa_aud', 'cpa', 'aud', 'Auditing and Attestation',           'AUD', '#155e75', 1),
   ('cpa_far', 'cpa', 'far', 'Financial Accounting and Reporting', 'FAR', '#4338ca', 2),
-  ('cpa_reg', 'cpa', 'reg', 'Taxation and Regulation',            'REG', '#9d174d', 3);
+  ('cpa_reg', 'cpa', 'reg', 'Taxation and Regulation',            'REG', '#9d174d', 3),
+  ('mcat_chemphys', 'mcat', 'chemphys', 'Chemical & Physical Foundations',   'C/P',  '#2563eb', 1),
+  ('mcat_cars',     'mcat', 'cars',     'Critical Analysis & Reasoning',     'CARS', '#c2410c', 2),
+  ('mcat_biochem',  'mcat', 'biochem',  'Biological & Biochemical Foundations','B/B', '#047857', 3),
+  ('mcat_psychsoc', 'mcat', 'psychsoc', 'Psychological & Social Foundations', 'P/S',  '#9333ea', 4);
