@@ -25,6 +25,7 @@ const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_RO
 const EXAM_RULES = {
   lsat: { sections: new Set(["lsat_lr", "lsat_rc"]), labels: ["A", "B", "C", "D", "E"] },
   pmp:  { sections: new Set(["pmp_people", "pmp_process", "pmp_business"]), labels: ["A", "B", "C", "D"] },
+  gmat: { sections: new Set(["gmat_quant", "gmat_verbal", "gmat_di"]), labels: ["A", "B", "C", "D", "E"] },
 };
 
 function validate(q, exam, sectionId) {

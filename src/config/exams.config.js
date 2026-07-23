@@ -81,6 +81,36 @@ export const EXAMS = {
     theme: { accent: '#7c3aed' },
   },
 
+  gmat: {
+    id: 'gmat',
+    title: 'Graduate Management Admission Test',
+    shortName: 'GMAT',
+
+    // Real GMAT allows the on-screen calculator only in Data Insights;
+    // tools are exam-wide for now, so it's listed here with that caveat.
+    tools: ['calculator'],
+
+    // GMAT Focus is SECTION-timed: 45 min per section.
+    timing: { mode: 'perSection', seconds: 45 * 60 },
+
+    // Focus Edition: 21 Quant / 23 Verbal / 20 Data Insights. questionsPerSection
+    // is a single knob, so 21 approximates the per-section counts.
+    simulation: {
+      sections: [
+        { code: 'quant',  scored: true },
+        { code: 'verbal', scored: true },
+        { code: 'di',     scored: true },
+      ],
+      questionsPerSection: 21,
+    },
+
+    // Focus Edition total score is 205-805; raw % until a conversion
+    // table is dropped in.
+    scale: null,
+
+    theme: { accent: '#0f766e' },
+  },
+
   // ---- add later, same shape ----
   // sat: { id:'sat', title:'SAT', shortName:'SAT', tools:['desmos'],
   //        timing:{ mode:'perModule', seconds:... }, scale:{...}, ... },
