@@ -160,7 +160,8 @@ insert into exams (id, name, short_name, sort_order) values
   ('pmp',  'Project Management Professional', 'PMP', 2),
   ('gmat', 'Graduate Management Admission Test', 'GMAT', 3),
   ('act',  'ACT', 'ACT', 4),
-  ('sat',  'SAT', 'SAT', 5);
+  ('sat',  'SAT', 'SAT', 5),
+  ('nclex', 'NCLEX-RN', 'NCLEX', 6);
 
 insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('lsat_lr', 'lsat', 'lr', 'Logical Reasoning',     'LR', '#2b579a', 1),
@@ -176,4 +177,8 @@ insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('act_reading', 'act', 'reading', 'Reading',   'RD', '#15803d', 3),
   ('act_science', 'act', 'science', 'Science',   'SC', '#7e22ce', 4),
   ('sat_rw',   'sat', 'rw',   'Reading and Writing', 'RW', '#0369a1', 1),
-  ('sat_math', 'sat', 'math', 'Math',                'MT', '#a21caf', 2);
+  ('sat_math', 'sat', 'math', 'Math',                'MT', '#a21caf', 2),
+  ('nclex_safe',   'nclex', 'safe',   'Safe & Effective Care Environment', 'SE', '#0891b2', 1),
+  ('nclex_health', 'nclex', 'health', 'Health Promotion & Maintenance',    'HP', '#65a30d', 2),
+  ('nclex_psych',  'nclex', 'psych',  'Psychosocial Integrity',            'PS', '#c026d3', 3),
+  ('nclex_physio', 'nclex', 'physio', 'Physiological Integrity',           'PI', '#e11d48', 4);

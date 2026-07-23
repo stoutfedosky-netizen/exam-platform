@@ -174,8 +174,35 @@ export const EXAMS = {
     theme: { accent: '#0369a1' },
   },
 
+  nclex: {
+    id: 'nclex',
+    title: 'NCLEX-RN',
+    shortName: 'NCLEX',
+
+    tools: ['calculator'],   // NCLEX provides an on-screen calculator
+
+    // Real NCLEX is CAT with a 5-hour cap for up to 150 items (~2 min each).
+    timing: { mode: 'perQuestion', seconds: 120 },
+
+    // The real exam has no sections (CAT draws across Client Needs); this
+    // assembly approximates an 85-item minimum-length exam by test-plan weight.
+    simulation: {
+      sections: [
+        { code: 'physio', scored: true },
+        { code: 'safe',   scored: true },
+        { code: 'health', scored: true },
+        { code: 'psych',  scored: true },
+      ],
+      questionsPerSection: 21,
+    },
+
+    // Real NCLEX is pass/fail (no numeric score); raw % stands in.
+    scale: null,
+
+    theme: { accent: '#0891b2' },
+  },
+
   // ---- add later, same shape ----
-  // nclex: { ..., tools:['calculator'], ... },
 };
 
 
