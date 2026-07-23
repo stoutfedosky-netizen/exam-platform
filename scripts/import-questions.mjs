@@ -30,6 +30,7 @@ const EXAM_RULES = {
   sat:  { sections: new Set(["sat_rw", "sat_math"]), labels: ["A", "B", "C", "D"] },
   nclex: { sections: new Set(["nclex_safe", "nclex_health", "nclex_psych", "nclex_physio"]), labels: ["A", "B", "C", "D"] },
   bar:  { sections: new Set(["bar_civpro", "bar_conlaw", "bar_contracts", "bar_crim", "bar_evidence", "bar_property", "bar_torts"]), labels: ["A", "B", "C", "D"] },
+  cpa:  { sections: new Set(["cpa_aud", "cpa_far", "cpa_reg"]), labels: ["A", "B", "C", "D"] },
 };
 
 function validate(q, exam, sectionId) {

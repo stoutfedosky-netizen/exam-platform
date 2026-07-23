@@ -162,7 +162,8 @@ insert into exams (id, name, short_name, sort_order) values
   ('act',  'ACT', 'ACT', 4),
   ('sat',  'SAT', 'SAT', 5),
   ('nclex', 'NCLEX-RN', 'NCLEX', 6),
-  ('bar', 'Multistate Bar Examination', 'MBE', 7);
+  ('bar', 'Multistate Bar Examination', 'MBE', 7),
+  ('cpa', 'Uniform CPA Examination', 'CPA', 8);
 
 insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('lsat_lr', 'lsat', 'lr', 'Logical Reasoning',     'LR', '#2b579a', 1),
@@ -189,4 +190,7 @@ insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('bar_crim',      'bar', 'crim',      'Criminal Law & Procedure',  'CR', '#7c2d12', 4),
   ('bar_evidence',  'bar', 'evidence',  'Evidence',                  'EV', '#6d28d9', 5),
   ('bar_property',  'bar', 'property',  'Real Property',             'RP', '#a16207', 6),
-  ('bar_torts',     'bar', 'torts',     'Torts',                     'TO', '#be185d', 7);
+  ('bar_torts',     'bar', 'torts',     'Torts',                     'TO', '#be185d', 7),
+  ('cpa_aud', 'cpa', 'aud', 'Auditing and Attestation',           'AUD', '#155e75', 1),
+  ('cpa_far', 'cpa', 'far', 'Financial Accounting and Reporting', 'FAR', '#4338ca', 2),
+  ('cpa_reg', 'cpa', 'reg', 'Taxation and Regulation',            'REG', '#9d174d', 3);

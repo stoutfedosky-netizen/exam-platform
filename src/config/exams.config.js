@@ -234,6 +234,35 @@ export const EXAMS = {
     theme: { accent: '#334155' },
   },
 
+  cpa: {
+    id: 'cpa',
+    title: 'Uniform CPA Examination',
+    shortName: 'CPA',
+
+    tools: ['calculator'],   // on-screen calculator available on the real exam
+
+    // Real sections are 4 hours mixing MCQs and simulations; MCQ pacing
+    // guidance is ~75-90 s per question.
+    timing: { mode: 'perQuestion', seconds: 90 },
+
+    // Core sections only (AUD/FAR/REG); Discipline sections are future
+    // expansion. Counts approximate the real MCQ loads (78/50/72).
+    simulation: {
+      sections: [
+        { code: 'aud', scored: true },
+        { code: 'far', scored: true },
+        { code: 'reg', scored: true },
+      ],
+      questionsPerSection: 66,
+    },
+
+    // Real scoring is 0-99 scaled (75 passes); raw % until a conversion
+    // table is dropped in.
+    scale: null,
+
+    theme: { accent: '#155e75' },
+  },
+
   // ---- add later, same shape ----
 };
 
