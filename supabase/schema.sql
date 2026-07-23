@@ -158,7 +158,8 @@ create policy attempts_select_own on question_attempts
 insert into exams (id, name, short_name, sort_order) values
   ('lsat', 'Law School Admission Test', 'LSAT', 1),
   ('pmp',  'Project Management Professional', 'PMP', 2),
-  ('gmat', 'Graduate Management Admission Test', 'GMAT', 3);
+  ('gmat', 'Graduate Management Admission Test', 'GMAT', 3),
+  ('act',  'ACT', 'ACT', 4);
 
 insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('lsat_lr', 'lsat', 'lr', 'Logical Reasoning',     'LR', '#2b579a', 1),
@@ -168,4 +169,8 @@ insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('pmp_business', 'pmp', 'business', 'Business Environment', 'BE', '#b45309', 3),
   ('gmat_quant',  'gmat', 'quant',  'Quantitative Reasoning', 'QT', '#0f766e', 1),
   ('gmat_verbal', 'gmat', 'verbal', 'Verbal Reasoning',       'VB', '#b91c1c', 2),
-  ('gmat_di',     'gmat', 'di',     'Data Insights',          'DI', '#1d4ed8', 3);
+  ('gmat_di',     'gmat', 'di',     'Data Insights',          'DI', '#1d4ed8', 3),
+  ('act_english', 'act', 'english', 'English',   'EN', '#be123c', 1),
+  ('act_math',    'act', 'math',    'Math',      'MA', '#1e40af', 2),
+  ('act_reading', 'act', 'reading', 'Reading',   'RD', '#15803d', 3),
+  ('act_science', 'act', 'science', 'Science',   'SC', '#7e22ce', 4);

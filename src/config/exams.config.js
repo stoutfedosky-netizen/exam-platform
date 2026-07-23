@@ -111,6 +111,37 @@ export const EXAMS = {
     theme: { accent: '#0f766e' },
   },
 
+  act: {
+    id: 'act',
+    title: 'ACT',
+    shortName: 'ACT',
+
+    // Real ACT allows a calculator only on Math; tools are exam-wide for now.
+    tools: ['calculator'],
+
+    // Enhanced ACT section pacing varies (42-67 s/question); 60 s/question
+    // approximates the overall 171 questions / 165 minutes.
+    timing: { mode: 'perQuestion', seconds: 60 },
+
+    // Enhanced ACT: English 50 / Math 45 / Reading 36 / Science 40 (optional,
+    // scored separately). questionsPerSection approximates the mix.
+    simulation: {
+      sections: [
+        { code: 'english', scored: true },
+        { code: 'math',    scored: true },
+        { code: 'reading', scored: true },
+        { code: 'science', scored: false },   // optional; not in the composite
+      ],
+      questionsPerSection: 40,
+    },
+
+    // 1-36 per section, composite averages EN/MA/RD; raw % until a
+    // conversion table is dropped in.
+    scale: null,
+
+    theme: { accent: '#be123c' },
+  },
+
   // ---- add later, same shape ----
   // sat: { id:'sat', title:'SAT', shortName:'SAT', tools:['desmos'],
   //        timing:{ mode:'perModule', seconds:... }, scale:{...}, ... },

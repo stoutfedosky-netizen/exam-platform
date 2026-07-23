@@ -1,4 +1,4 @@
-// Batch-imports question JSON files into Supabase (LSAT, PMP, ...).
+// Batch-imports exam question JSON files into Supabase.
 // Usage:
 //   node scripts/import-questions.mjs ./batches/LR-001.json
 //   node scripts/import-questions.mjs ./batches/*.json
@@ -21,11 +21,12 @@ const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_RO
 });
 
 // Per-exam validation rules: which sections exist and how many choices a
-// question carries (LSAT = 5 choices A-E, PMP = 4 choices A-D).
+// question carries (LSAT/GMAT = 5 choices A-E, PMP = 4 choices A-D).
 const EXAM_RULES = {
   lsat: { sections: new Set(["lsat_lr", "lsat_rc"]), labels: ["A", "B", "C", "D", "E"] },
   pmp:  { sections: new Set(["pmp_people", "pmp_process", "pmp_business"]), labels: ["A", "B", "C", "D"] },
   gmat: { sections: new Set(["gmat_quant", "gmat_verbal", "gmat_di"]), labels: ["A", "B", "C", "D", "E"] },
+  act:  { sections: new Set(["act_english", "act_math", "act_reading", "act_science"]), labels: ["A", "B", "C", "D"] },
 };
 
 function validate(q, exam, sectionId) {
@@ -37,17 +38,22 @@ function validate(q, exam, sectionId) {
   if (!rules.sections.has(sectionId)) errors.push(`unknown section: ${sectionId}`);
   if (!Array.isArray(q.choices) || q.choices.length !== labels.length) {
     errors.push(`must have exactly ${labels.length} choices`);
-  } else {
-    const got = q.choices.map((c) => c.label).sort().join("");
+  }
+  else {
+    const got = q.choices.map((c) => c.label).join("");
     if (got !== labels.join("")) errors.push(`choice labels must be ${letterRange}, got: ${got}`);
   }
   if (!labels.includes(q.correct)) errors.push(`correct must be ${letterRange}, got: ${q.correct}`);
   if (!q.explanations || Object.keys(q.explanations).length !== labels.length) {
     errors.push(`must have ${labels.length} explanations`);
-  } else {
+  }
+  else {
     for (const l of labels) {
       if (!q.explanations[l]) errors.push(`missing explanation for ${l}`);
     }
+  }
+  if (sectionId.startsWith("pmp_") && q.usePrevPassage === true) {
+    errors.push("PMP questions cannot reuse a previous passage");
   }
   return errors;
 }
