@@ -202,6 +202,38 @@ export const EXAMS = {
     theme: { accent: '#0891b2' },
   },
 
+  bar: {
+    id: 'bar',
+    title: 'Multistate Bar Examination',
+    shortName: 'MBE',
+
+    tools: [],   // no in-exam tools on the MBE
+
+    // Real MBE: 200 questions in two 3-hour sessions = 108 s/question.
+    timing: { mode: 'perQuestion', seconds: 108 },
+
+    // All seven subjects equally weighted (25 scored each on the real exam);
+    // 28 per section approximates a full 200-question administration.
+    simulation: {
+      sections: [
+        { code: 'civpro',    scored: true },
+        { code: 'conlaw',    scored: true },
+        { code: 'contracts', scored: true },
+        { code: 'crim',      scored: true },
+        { code: 'evidence',  scored: true },
+        { code: 'property',  scored: true },
+        { code: 'torts',     scored: true },
+      ],
+      questionsPerSection: 28,
+    },
+
+    // MBE reports a scaled score (~40-200); raw % until a conversion table
+    // is dropped in.
+    scale: null,
+
+    theme: { accent: '#334155' },
+  },
+
   // ---- add later, same shape ----
 };
 

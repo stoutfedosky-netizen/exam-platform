@@ -161,7 +161,8 @@ insert into exams (id, name, short_name, sort_order) values
   ('gmat', 'Graduate Management Admission Test', 'GMAT', 3),
   ('act',  'ACT', 'ACT', 4),
   ('sat',  'SAT', 'SAT', 5),
-  ('nclex', 'NCLEX-RN', 'NCLEX', 6);
+  ('nclex', 'NCLEX-RN', 'NCLEX', 6),
+  ('bar', 'Multistate Bar Examination', 'MBE', 7);
 
 insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('lsat_lr', 'lsat', 'lr', 'Logical Reasoning',     'LR', '#2b579a', 1),
@@ -181,4 +182,11 @@ insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('nclex_safe',   'nclex', 'safe',   'Safe & Effective Care Environment', 'SE', '#0891b2', 1),
   ('nclex_health', 'nclex', 'health', 'Health Promotion & Maintenance',    'HP', '#65a30d', 2),
   ('nclex_psych',  'nclex', 'psych',  'Psychosocial Integrity',            'PS', '#c026d3', 3),
-  ('nclex_physio', 'nclex', 'physio', 'Physiological Integrity',           'PI', '#e11d48', 4);
+  ('nclex_physio', 'nclex', 'physio', 'Physiological Integrity',           'PI', '#e11d48', 4),
+  ('bar_civpro',    'bar', 'civpro',    'Civil Procedure',           'CP', '#334155', 1),
+  ('bar_conlaw',    'bar', 'conlaw',    'Constitutional Law',        'CL', '#991b1b', 2),
+  ('bar_contracts', 'bar', 'contracts', 'Contracts',                 'CT', '#0d9488', 3),
+  ('bar_crim',      'bar', 'crim',      'Criminal Law & Procedure',  'CR', '#7c2d12', 4),
+  ('bar_evidence',  'bar', 'evidence',  'Evidence',                  'EV', '#6d28d9', 5),
+  ('bar_property',  'bar', 'property',  'Real Property',             'RP', '#a16207', 6),
+  ('bar_torts',     'bar', 'torts',     'Torts',                     'TO', '#be185d', 7);

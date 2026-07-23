@@ -29,6 +29,7 @@ const EXAM_RULES = {
   act:  { sections: new Set(["act_english", "act_math", "act_reading", "act_science"]), labels: ["A", "B", "C", "D"] },
   sat:  { sections: new Set(["sat_rw", "sat_math"]), labels: ["A", "B", "C", "D"] },
   nclex: { sections: new Set(["nclex_safe", "nclex_health", "nclex_psych", "nclex_physio"]), labels: ["A", "B", "C", "D"] },
+  bar:  { sections: new Set(["bar_civpro", "bar_conlaw", "bar_contracts", "bar_crim", "bar_evidence", "bar_property", "bar_torts"]), labels: ["A", "B", "C", "D"] },
 };
 
 function validate(q, exam, sectionId) {
@@ -63,7 +64,14 @@ function validate(q, exam, sectionId) {
 async function importFile(filePath) {
   const raw = readFileSync(resolve(filePath), "utf8");
   const data = JSON.parse(raw);
-  const { exam, section, batch, passage_category, questions } = data;
+  const {
+    exam,
+    section,
+    batch,
+    passage_category,
+    passage_format,
+    questions,
+  } = data;
   const sectionId = `${exam}_${section}`;
 
   console.log(`\n── ${batch} (${filePath}) ──`);
@@ -93,8 +101,9 @@ async function importFile(filePath) {
       difficulty: q.difficulty,
       sort_order: q.sortOrder,
     };
-    if (passage_category && q.sortOrder === 0) {
-      row.content_category = passage_category;
+    const contentCategory = passage_category ?? passage_format;
+    if (contentCategory && q.sortOrder === 0) {
+      row.content_category = contentCategory;
     }
     rows.push(row);
   }
