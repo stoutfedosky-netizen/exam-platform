@@ -1,4 +1,4 @@
-// Batch-imports LSAT question JSON files into Supabase.
+// Batch-imports question JSON files into Supabase (LSAT, PMP, ...).
 // Usage:
 //   node scripts/import-questions.mjs ./batches/LR-001.json
 //   node scripts/import-questions.mjs ./batches/*.json
@@ -20,21 +20,31 @@ const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_RO
   auth: { persistSession: false },
 });
 
-const VALID_SECTIONS = new Set(["lsat_lr", "lsat_rc"]);
-const VALID_ANSWERS = new Set(["A", "B", "C", "D", "E"]);
+// Per-exam validation rules: which sections exist and how many choices a
+// question carries (LSAT = 5 choices A-E, PMP = 4 choices A-D).
+const EXAM_RULES = {
+  lsat: { sections: new Set(["lsat_lr", "lsat_rc"]), labels: ["A", "B", "C", "D", "E"] },
+  pmp:  { sections: new Set(["pmp_people", "pmp_process", "pmp_business"]), labels: ["A", "B", "C", "D"] },
+};
 
-function validate(q, sectionId) {
+function validate(q, exam, sectionId) {
   const errors = [];
-  if (!VALID_SECTIONS.has(sectionId)) errors.push(`unknown section: ${sectionId}`);
-  if (!Array.isArray(q.choices) || q.choices.length !== 5) errors.push("must have exactly 5 choices");
-  else {
-    const labels = q.choices.map((c) => c.label).sort().join("");
-    if (labels !== "ABCDE") errors.push(`choice labels must be A-E, got: ${labels}`);
+  const rules = EXAM_RULES[exam];
+  if (!rules) return [`unknown exam: ${exam}`];
+  const { labels } = rules;
+  const letterRange = `A-${labels[labels.length - 1]}`;
+  if (!rules.sections.has(sectionId)) errors.push(`unknown section: ${sectionId}`);
+  if (!Array.isArray(q.choices) || q.choices.length !== labels.length) {
+    errors.push(`must have exactly ${labels.length} choices`);
+  } else {
+    const got = q.choices.map((c) => c.label).sort().join("");
+    if (got !== labels.join("")) errors.push(`choice labels must be ${letterRange}, got: ${got}`);
   }
-  if (!VALID_ANSWERS.has(q.correct)) errors.push(`correct must be A-E, got: ${q.correct}`);
-  if (!q.explanations || Object.keys(q.explanations).length !== 5) errors.push("must have 5 explanations");
-  else {
-    for (const l of ["A", "B", "C", "D", "E"]) {
+  if (!labels.includes(q.correct)) errors.push(`correct must be ${letterRange}, got: ${q.correct}`);
+  if (!q.explanations || Object.keys(q.explanations).length !== labels.length) {
+    errors.push(`must have ${labels.length} explanations`);
+  } else {
+    for (const l of labels) {
       if (!q.explanations[l]) errors.push(`missing explanation for ${l}`);
     }
   }
@@ -53,7 +63,7 @@ async function importFile(filePath) {
   let validationFailed = 0;
 
   for (const q of questions) {
-    const errs = validate(q, sectionId);
+    const errs = validate(q, exam, sectionId);
     if (errs.length) {
       console.error(`  ✗ ${q.id}: ${errs.join("; ")}`);
       validationFailed++;

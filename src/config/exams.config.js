@@ -54,6 +54,33 @@ export const EXAMS = {
     theme: { accent: '#2b579a' },
   },
 
+  pmp: {
+    id: 'pmp',
+    title: 'Project Management Professional',
+    shortName: 'PMP',
+
+    tools: ['calculator'],   // PMP has an on-screen calculator
+
+    // PMP is question-timed in aggregate: 230 min / 180 questions ≈ 77 s each.
+    timing: { mode: 'perQuestion', seconds: 77 },
+
+    // The real exam mixes domains freely; this is a placeholder assembly that
+    // roughly mirrors ECO weights (42/50/8) at 180 questions.
+    simulation: {
+      sections: [
+        { code: 'people',   scored: true },
+        { code: 'process',  scored: true },
+        { code: 'business', scored: true },
+      ],
+      questionsPerSection: 60,
+    },
+
+    // PMP reports Above/At/Below Target per domain, not a numeric scale.
+    scale: null,
+
+    theme: { accent: '#7c3aed' },
+  },
+
   // ---- add later, same shape ----
   // sat: { id:'sat', title:'SAT', shortName:'SAT', tools:['desmos'],
   //        timing:{ mode:'perModule', seconds:... }, scale:{...}, ... },

@@ -156,8 +156,12 @@ create policy attempts_select_own on question_attempts
 -- plus a new entry in exams.config.js — no schema change.
 -- =====================================================================
 insert into exams (id, name, short_name, sort_order) values
-  ('lsat', 'Law School Admission Test', 'LSAT', 1);
+  ('lsat', 'Law School Admission Test', 'LSAT', 1),
+  ('pmp',  'Project Management Professional', 'PMP', 2);
 
 insert into sections (id, exam_id, code, name, abbr, color, sort_order) values
   ('lsat_lr', 'lsat', 'lr', 'Logical Reasoning',     'LR', '#2b579a', 1),
-  ('lsat_rc', 'lsat', 'rc', 'Reading Comprehension', 'RC', '#1a7f5c', 2);
+  ('lsat_rc', 'lsat', 'rc', 'Reading Comprehension', 'RC', '#1a7f5c', 2),
+  ('pmp_people',   'pmp', 'people',   'People',               'PE', '#7c3aed', 1),
+  ('pmp_process',  'pmp', 'process',  'Process',              'PR', '#0e7490', 2),
+  ('pmp_business', 'pmp', 'business', 'Business Environment', 'BE', '#b45309', 3);
