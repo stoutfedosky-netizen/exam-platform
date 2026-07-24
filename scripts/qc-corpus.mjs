@@ -17,7 +17,7 @@
 //
 // Writes batches/CORPUS_QC_REPORT.md (human) + CORPUS_QC_FINDINGS.json (full
 // remediation data, including every recycled distractor with its question IDs).
-// Exits non-zero if any BLOCKER finding exists, so it can gate an import.
+// Exits non-zero if any BLOCKER or HIGH finding exists, so it can gate an import.
 
 import { globSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, resolve } from "node:path";
@@ -181,6 +181,51 @@ function checkRecycledChoices(questions) {
   }
 }
 
+// 3c. C10 — internal boilerplate. Position-independent successor to the
+//     template-suffix check. The first regeneration defeated exact-match (C1/C2)
+//     and the tail check (C4) by appending a per-item-varying filler clause
+//     ("…within this bounded", "…at the final stage in '18", "…under the
+//     conditions described in the item within this…") so the surface string and
+//     the last 6 words differ while the distractor stays boilerplate. This scans
+//     for any normalized 8-word phrase, numbers stripped, that recurs across a
+//     large share of an exam's choices — regardless of where it sits.
+function checkInternalBoilerplate(questions) {
+  const NORM = (s) =>
+    (s || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\b\d{1,4}\b/g, " ").replace(/\s+/g, " ").trim();
+  for (const [exam, qs] of byExam(questions)) {
+    const choiceCount = qs.reduce((n, q) => n + (q.choices?.length || 0), 0);
+    if (choiceCount < 100) continue;
+    const gram = new Map(); // 8-gram -> Set of choice indices it appears in
+    let idx = 0;
+    for (const q of qs) {
+      for (const c of q.choices || []) {
+        const raw = (c?.text || "").trim().toLowerCase();
+        if (isCanonicalChoice(raw)) { idx++; continue; }
+        const w = NORM(c?.text).split(" ").filter(Boolean);
+        const local = new Set();
+        for (let i = 0; i + 8 <= w.length; i++) local.add(w.slice(i, i + 8).join(" "));
+        for (const g of local) {
+          if (!gram.has(g)) gram.set(g, new Set());
+          gram.get(g).add(idx);
+        }
+        idx++;
+      }
+    }
+    const floor = Math.max(15, Math.round(choiceCount * 0.01)); // >=1% of choices, min 15
+    const hits = [...gram.entries()]
+      .map(([g, s]) => ({ phrase: g, choices: s.size, share: +pct(s.size, choiceCount).toFixed(1) }))
+      .filter((h) => h.choices >= floor)
+      .sort((a, b) => b.choices - a.choices);
+    if (!hits.length) continue;
+    // collapse overlapping sub-phrases of the single worst offender for readability
+    const top = hits[0];
+    const sev = top.share >= 10 ? "HIGH" : "MEDIUM";
+    add(sev, exam, "internal-boilerplate",
+      `A recurring filler phrase appears in ${top.share}% of this exam's choices (worst 8-gram "${top.phrase}" in ${top.choices} choices; ${hits.length} distinct high-frequency phrases total). This is manufactured boilerplate — the same distractor with a per-item-varying tail to defeat exact-match dedup.`,
+      hits.slice(0, T.listCap).map((h) => ({ uses: h.choices, share: `${h.share}%`, phrase: h.phrase })));
+  }
+}
+
 // 4. Template-suffix detector — catches generator "slot" phrases like
 //    "…, under the conditions described in the item."
 function checkTemplateSuffixes(questions) {
@@ -188,7 +233,9 @@ function checkTemplateSuffixes(questions) {
     const tails = new Map();
     for (const q of qs) {
       for (const c of q.choices || []) {
-        const words = (c?.text || "").trim().replace(/[.?!]+$/, "").split(/\s+/);
+        const raw = (c?.text || "").trim();
+        if (isCanonicalChoice(raw.toLowerCase())) continue;
+        const words = raw.replace(/[.?!]+$/, "").split(/\s+/);
         if (words.length < T.tailWords + 3) continue;
         const tail = words.slice(-T.tailWords).join(" ").toLowerCase();
         if (!tails.has(tail)) tails.set(tail, []);
@@ -537,6 +584,7 @@ checkIds(corpus.questions, corpus.batches);
 checkKeyAgreement(corpus.questions);
 checkRecycledChoices(corpus.questions);
 checkDuplicateChoiceSets(corpus.questions);
+checkInternalBoilerplate(corpus.questions);
 checkTemplateSuffixes(corpus.questions);
 checkPositionalCloning(corpus.questions);
 checkScenarioDiversity(corpus.questions);
@@ -570,4 +618,4 @@ for (const f of real.sort((a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity
   console.log(`  [${f.severity}] ${f.exam} ${f.check}: ${f.summary.slice(0, 95)}`);
 }
 console.log("");
-process.exit(c.BLOCKER > 0 ? 1 : 0);
+process.exit(c.BLOCKER > 0 || c.HIGH > 0 ? 1 : 0);
