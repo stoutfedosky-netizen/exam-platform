@@ -26,19 +26,23 @@ import { fileURLToPath } from "node:url";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 // ── Thresholds ────────────────────────────────────────────────────────────
+// These mirror the "Corpus-Level Rules" section (C1-C9) now carried by every
+// *_BATCH_SPEC.md. Keep the two in sync — the spec is the contract, this is
+// the enforcement.
 const T = {
-  choiceMinLen: 40,        // only long choices count as "recycled" (short ones legitimately repeat)
-  choiceReuseFlag: 3,      // a long choice used >= this many times is a finding
+  choiceMinLen: 40,        // C1: only long choices count (short ones legitimately repeat)
+  choiceReuseFlag: 3,      // C1: >2 occurrences is a violation
   choiceReuseHigh: 10,     // ... and at this many it is HIGH severity
-  openingWords: 8,         // scenario "opening" = first N words
+  openingWords: 8,         // C5/C6: scenario "opening" = first N words
   openingMinLen: 60,       // ignore trivially short passages
-  openingDiversityHigh: 0.25,   // distinct openings / scenarios below this = HIGH
-  openingDiversityMed: 0.50,
-  letterSkewMed: 3.0,      // percentage points from uniform
+  openingDiversityHigh: 0.25,   // distinct openings / scenarios: below this = HIGH
+  openingDiversityMed: 0.60,    // C5: >= 0.60 required
+  openingShareCap: 3,      // C6: no single opening shared by more than 3 scenarios
+  letterSkewMed: 3.0,      // C8: within +/-3 percentage points of uniform
   letterSkewHigh: 5.0,
-  topicShareFlag: 0.15,    // a single topic owning >15% of an exam = concentration finding
-  tailWords: 6,            // template-suffix detector window
-  tailReuseFlag: 25,       // identical trailing phrase this often = template slot
+  topicShareFlag: 0.15,    // C9: no single topic above 15% of an exam
+  tailWords: 6,            // C4: template-suffix detector window
+  tailReuseFlag: 11,       // C4: a 6-word tail across >10 choices is a template slot
   listCap: 25,             // max rows rendered per section in the markdown report
 };
 
@@ -201,6 +205,30 @@ function checkTemplateSuffixes(questions) {
   }
 }
 
+// 3b. C2 — choice-set uniqueness. Two questions carrying an identical full set
+//     of options are the same item wearing different stems.
+function checkDuplicateChoiceSets(questions) {
+  for (const [exam, qs] of byExam(questions)) {
+    const sets = new Map();
+    for (const q of qs) {
+      const choices = q.choices || [];
+      if (!choices.length) continue;
+      if (choices.every((c) => isCanonicalChoice((c?.text || "").trim().toLowerCase()))) continue;
+      const key = choices.map((c) => (c?.text || "").trim().toLowerCase()).join(" | ");
+      if (!sets.has(key)) sets.set(key, []);
+      sets.get(key).push(q.id);
+    }
+    const dupes = [...sets.entries()]
+      .filter(([, ids]) => ids.length > 1)
+      .sort((a, b) => b[1].length - a[1].length);
+    if (!dupes.length) continue;
+    const affected = dupes.reduce((n, [, ids]) => n + ids.length, 0);
+    add(dupes[0][1].length >= 5 ? "HIGH" : "MEDIUM", exam, "duplicate-choice-set",
+      `${dupes.length} choice set(s) shared by more than one question (worst: ${dupes[0][1].length} questions), affecting ${affected} questions.`,
+      dupes.map(([key, ids]) => ({ uses: ids.length, questionIds: ids, choices: key.slice(0, 130) })));
+  }
+}
+
 // 4b. Positional cloning — questions occupying the SAME slot across batches
 //     sharing a choice set. Distinct from generic recycling: it points at
 //     template-per-slot generation, meaning batches are structural near-clones
@@ -275,9 +303,17 @@ function checkScenarioDiversity(questions) {
               : diversity < T.openingDiversityMed ? "MEDIUM" : null;
     if (sev) {
       add(sev, exam, "scenario-templating",
-        `Only ${openings.size} distinct openings across ${scenarios.length} scenarios (${(diversity * 100).toFixed(1)}% diversity); the top 20 openings cover ${pct(top20, scenarios.length).toFixed(1)}% of all scenarios.`,
+        `C5: only ${openings.size} distinct openings across ${scenarios.length} scenarios (${(diversity * 100).toFixed(1)}% diversity, spec requires >= ${(T.openingDiversityMed * 100).toFixed(0)}%); the top 20 openings cover ${pct(top20, scenarios.length).toFixed(1)}% of all scenarios.`,
         ranked.filter(([, ids]) => ids.length > 2)
           .map(([opening, ids]) => ({ uses: ids.length, opening, sampleIds: ids.slice(0, 6) })));
+    }
+
+    // C6 — no single opening shared by more than N scenarios
+    const overCap = ranked.filter(([, ids]) => ids.length > T.openingShareCap);
+    if (overCap.length) {
+      add(overCap[0][1].length >= T.openingShareCap * 4 ? "HIGH" : "MEDIUM", exam, "scenario-opening-cap",
+        `C6: ${overCap.length} opening(s) shared by more than ${T.openingShareCap} scenarios (worst: ${overCap[0][1].length}).`,
+        overCap.map(([opening, ids]) => ({ uses: ids.length, opening, sampleIds: ids.slice(0, 6) })));
     }
   }
 }
@@ -500,6 +536,7 @@ if (!corpus.questions.length) {
 checkIds(corpus.questions, corpus.batches);
 checkKeyAgreement(corpus.questions);
 checkRecycledChoices(corpus.questions);
+checkDuplicateChoiceSets(corpus.questions);
 checkTemplateSuffixes(corpus.questions);
 checkPositionalCloning(corpus.questions);
 checkScenarioDiversity(corpus.questions);
